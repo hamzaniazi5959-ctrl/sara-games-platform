@@ -30,6 +30,81 @@ const { drizzle } = await import("drizzle-orm/libsql");
 const libsqlClient = createClient({ url: `file:${DB_PATH}` });
 const db = drizzle(libsqlClient);
 
+// ---- Create tables if not exist (for fresh deploys) ----
+try {
+  await libsqlClient.execute(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    username TEXT NOT NULL,
+    display_name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    password_hash TEXT,
+    bio TEXT NOT NULL DEFAULT '',
+    avatar_blob_key TEXT,
+    is_seed INTEGER NOT NULL DEFAULT 0,
+    created_at INTEGER NOT NULL
+  )`);
+  await libsqlClient.execute(`CREATE UNIQUE INDEX IF NOT EXISTS users_username_idx ON users (username)`);
+  await libsqlClient.execute(`CREATE UNIQUE INDEX IF NOT EXISTS users_email_idx ON users (email)`);
+  await libsqlClient.execute(`CREATE TABLE IF NOT EXISTS sessions (
+    token TEXT PRIMARY KEY NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at INTEGER NOT NULL
+  )`);
+  await libsqlClient.execute(`CREATE TABLE IF NOT EXISTS games (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    creator_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    genre TEXT NOT NULL,
+    category TEXT NOT NULL,
+    price_cents INTEGER NOT NULL DEFAULT 0,
+    featured INTEGER NOT NULL DEFAULT 0,
+    source_url TEXT,
+    source_image_url TEXT,
+    thumbnail_blob_key TEXT,
+    html_content TEXT,
+    created_at INTEGER NOT NULL,
+    play_count INTEGER NOT NULL DEFAULT 0
+  )`);
+  await libsqlClient.execute(`CREATE TABLE IF NOT EXISTS purchases (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    buyer_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    game_id INTEGER NOT NULL REFERENCES games(id) ON DELETE CASCADE,
+    amount_cents INTEGER NOT NULL,
+    created_at INTEGER NOT NULL
+  )`);
+  await libsqlClient.execute(`CREATE UNIQUE INDEX IF NOT EXISTS purchases_buyer_game_idx ON purchases (buyer_id, game_id)`);
+  await libsqlClient.execute(`CREATE TABLE IF NOT EXISTS posts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    caption TEXT NOT NULL,
+    media_blob_key TEXT,
+    media_type TEXT NOT NULL DEFAULT 'none',
+    media_mime TEXT,
+    created_at INTEGER NOT NULL
+  )`);
+  await libsqlClient.execute(`CREATE TABLE IF NOT EXISTS post_likes (
+    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at INTEGER NOT NULL,
+    PRIMARY KEY (post_id, user_id)
+  )`);
+  await libsqlClient.execute(`CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    body TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )`);
+  await libsqlClient.execute(`CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY NOT NULL,
+    value TEXT NOT NULL
+  )`);
+  console.log("Database tables initialized.");
+} catch (e) {
+  console.error("Table creation failed:", e.message);
+}
+
 // ---- Blob store (mirrors Hatch layout: objects/<2>/<full-id>, index.sqlite) ----
 async function blobInit() {
   await mkdir(join(BLOBS_DIR, "objects"), { recursive: true });
