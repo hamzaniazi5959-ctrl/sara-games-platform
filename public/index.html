@@ -10,11 +10,71 @@
     <title>Sara Games Platform</title>
     <meta name="google-site-verification" content="TpK2_-W_iFTL7_RAb1NMNQprucDexU0c-K3o_qXhaZE" />
 
-  <link rel="stylesheet" crossorigin href="./assets/index-nnrva0tm.css"><script type="module" crossorigin src="./assets/index-jqce9pj2.js"></script></head>
-  <body>
+  <link rel="stylesheet" crossorigin href="./assets/index-nnrva0tm.css"><script type="module" crossorigin src="./assets/index-jqce9pj2.js"></script>
+    <style>
+      /* Dedicated Ads Sidebar - right side, ads only */
+      #ads-sidebar {
+        position: fixed;
+        right: 0;
+        top: 0;
+        width: 320px;
+        height: 100vh;
+        background: #f8f9fa;
+        border-left: 1px solid #e0e0e0;
+        overflow-y: auto;
+        z-index: 50;
+        padding: 16px 10px;
+        box-sizing: border-box;
+      }
+      #ads-sidebar .ad-label {
+        font-size: 11px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-align: center;
+        margin-bottom: 8px;
+      }
+      #ads-sidebar .ad-slot {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      /* Push main content left to make room for sidebar */
+      body.has-ads-sidebar [data-generated-space-root] {
+        margin-right: 320px;
+      }
+      @media (max-width: 900px) {
+        #ads-sidebar { display: none; }
+        body.has-ads-sidebar [data-generated-space-root] { margin-right: 0; }
+      }
+    </style>
+  </head>
+  <body class="has-ads-sidebar">
     <div
       data-generated-space-root=""
       data-generated-space-slug="sara-games-platform"
     ></div>
+    <!-- Dedicated Ads Sidebar -->
+    <aside id="ads-sidebar">
+      <div class="ad-label">Advertisement</div>
+      <!-- Adsterra 300x250 (Site 6128336) -->
+      <div class="ad-slot">
+        <script>
+          atOptions = {
+            'key' : '8168a74d880b2287357d7acdcdc5d327',
+            'format' : 'iframe',
+            'height' : 250,
+            'width' : 300,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highrevenueformat.com/8168a74d880b2287357d7acdcdc5d327/invoke.js"></script>
+      </div>
+      <div class="ad-label">Advertisement</div>
+      <!-- Adsterra Native Banner (Site 6128336) -->
+      <div class="ad-slot">
+        <script async="async" data-cfasync="false" src="https://pl31870669.profitableratecpmnetwork.com/45f89324d4414fda90cc0f82f6b3974f/invoke.js"></script>
+        <div id="container-45f89324d4414fda90cc0f82f6b3974f"></div>
+      </div>
+    </aside>
   </body>
 </html>
