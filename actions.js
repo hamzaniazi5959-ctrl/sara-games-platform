@@ -5812,10 +5812,11 @@ var Actions = {
         throw new Error("Sara Games creator account is missing.");
       const existing = await db.select().from(games);
       let inserted = 0;
-      if (existing.length === 0) {
-        await db.insert(games).values(seedGames.map((g, index) => ({ creatorId: creator.id, title: g.title, description: g.description, genre: g.genre, category: g.category, priceCents: 0, featured: Boolean(g.featured), sourceUrl: g.sourceUrl, sourceImageUrl: g.image, createdAt: new Date(1792173600000 + index * 1000), playCount: 0 })));
-        inserted = seedGames.length;
-      }
+      // Seed games disabled per Khan's order (2026-10-16) - only playable uploads
+      // if (existing.length === 0) {
+      //   await db.insert(games).values(seedGames.map((g, index) => ({ creatorId: creator.id, title: g.title, description: g.description, genre: g.genre, category: g.category, priceCents: 0, featured: Boolean(g.featured), sourceUrl: g.sourceUrl, sourceImageUrl: g.image, createdAt: new Date(1792173600000 + index * 1000), playCount: 0 })));
+      //   inserted = seedGames.length;
+      // }
       const rows = await db.select().from(games).where(and(eq(games.creatorId, creator.id), sql`${games.sourceImageUrl} IS NOT NULL`, sql`${games.thumbnailBlobKey} IS NULL`));
       let imagesImported = 0;
       let imageFailures = 0;
