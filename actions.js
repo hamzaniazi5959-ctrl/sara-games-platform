@@ -5793,8 +5793,21 @@ var Actions = {
     response: bootstrapResponse,
     async handler(ctx) {
       const db = ctx.db();
-      const creatorRows = await db.select().from(users).where(eq(users.username, "saragames6")).limit(1);
-      const creator = creatorRows[0];
+      let creatorRows = await db.select().from(users).where(eq(users.username, "saragames6")).limit(1);
+      let creator = creatorRows[0];
+      if (!creator) {
+        // Create the saragames6 seed creator if missing (for fresh deploys)
+        const newRows = await db.insert(users).values({
+          username: "saragames6",
+          displayName: "Sara Games",
+          email: "aicandy129@gmail.com",
+          passwordHash: "",
+          bio: "Official Sara Games creator account.",
+          isSeed: true,
+          createdAt: new Date()
+        }).returning();
+        creator = newRows[0];
+      }
       if (!creator)
         throw new Error("Sara Games creator account is missing.");
       const existing = await db.select().from(games);
