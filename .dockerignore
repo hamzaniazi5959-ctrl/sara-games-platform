@@ -1,0 +1,4 @@
+node_modules
+data/app.db
+data/blobs
+*.log

@@ -1,0 +1,1 @@
+{"dependencies":{"@libsql/client":"^0.15.0","drizzle-orm":"0.45.2"},"engines":{"bun":">=1.0"},"name":"sara-games-platform-standalone","scripts":{"start":"bun server.mjs"},"type":"module","version":"1.0.0"}
